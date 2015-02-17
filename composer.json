@@ -1,0 +1,14 @@
+{
+    "name": "arrowrowe/ilex",
+    "description": "A simple PHP framework from scratch.",
+    "license": "AGPL",
+    "authors": [
+        {
+            "name": "Arrow Rowe",
+            "email": "arrowrowe@gmail.com"
+        }
+    ],
+    "require": {
+
+    }
+}
