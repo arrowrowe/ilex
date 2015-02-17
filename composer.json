@@ -1,5 +1,6 @@
 {
     "name": "arrowrowe/ilex",
+    "version": "0.0.1",
     "description": "A simple PHP framework from scratch.",
     "license": "AGPL",
     "authors": [
