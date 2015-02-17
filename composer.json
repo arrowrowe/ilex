@@ -8,6 +8,10 @@
             "email": "arrowrowe@gmail.com"
         }
     ],
+    "type": "project",
+    "autoload": {
+        "psr-4": {"Ilex\\": "src/"}
+    },
     "require": {
 
     }
