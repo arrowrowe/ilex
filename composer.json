@@ -1,7 +1,8 @@
 {
     "name": "arrowrowe/ilex",
-    "version": "0.0.1",
+    "type": "project",
     "description": "A simple PHP framework from scratch.",
+    "version": "0.0.1",
     "license": "AGPL",
     "authors": [
         {
@@ -9,7 +10,12 @@
             "email": "arrowrowe@gmail.com"
         }
     ],
-    "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/arrowrowe/ilex"
+        }
+    ],
     "autoload": {
         "psr-4": {"Ilex\\": "src/"}
     },
