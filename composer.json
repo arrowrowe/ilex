@@ -20,6 +20,6 @@
         "psr-4": {"Ilex\\": "src/"}
     },
     "require": {
-
+        "twig/twig": "~1.0"
     }
 }
