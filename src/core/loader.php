@@ -32,19 +32,17 @@ class Loader
                 )
             );
         }
-        // Do NOT expose twig. Return self for the chain-method.
-        return self;
     }
 
     public static function assign($vars)
     {
         self::let('twigVars', array_merge(self::get('twigVars'), $vars));
-        return self;
     }
 
     public static function render($template)
     {
-        echo((self::get('twig'))->render($template, self::get('twigVars')));
+        $twig = self::get('twig');
+        echo($twig->render($template, self::get('twigVars')));
     }
 
     public static function db()
