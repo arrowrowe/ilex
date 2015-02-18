@@ -10,10 +10,41 @@ class Loader
     private static function get($k)     { return self::$container[$k];        }
     private static function let($k, $v) { return self::$container[$k] = $v;   }
 
-    public static function init($ILEXPATH, $APPPATH)
+    public static function init($ILEXPATH, $APPPATH, $RUNTIMEPATH)
     {
         self::let('ILEXPATH', $ILEXPATH);
         self::let('APPPATH', $APPPATH);
+        self::let('RUNTIMEPATH', $RUNTIMEPATH);
+    }
+
+    public static function twig()
+    {
+        if (!self::has('twig')) {
+            // Initialize an empty array for twig variables.
+            self::let('twigVars', array());
+            self::let('twig',
+                new \Twig_Environment(
+                    new \Twig_Loader_Filesystem(self::get('APPPATH') . 'view/'),
+                    array(
+                        'cache' => self::get('RUNTIMEPATH') . 'twig_compile/',
+                        'auto_reload' => TRUE,
+                    )
+                )
+            );
+        }
+        // Do NOT expose twig. Return self for the chain-method.
+        return self;
+    }
+
+    public static function assign($vars)
+    {
+        self::let('twigVars', array_merge(self::get('twigVars'), $vars));
+        return self;
+    }
+
+    public static function render($template)
+    {
+        echo((self::get('twig'))->render($template, self::get('twigVars')));
     }
 
     public static function db()
@@ -31,12 +62,20 @@ class Loader
         }
     }
 
+    /*
+     * Show an error page.
+     * @param int $code
+     * @param str $message
+     * @param str $title
+     * @todo Use twig to render an error page.
+     */
     public static function error($code, $message = 'Oops!', $title = NULL)
     {
-        self::view('base/error', array(
-                'title' => is_null($title) ? $code : $title,
-                'message' => $message
-            ));
+        // @todo: Use twig to rewrite this.
+        // self::view('base/error', array(
+        //         'title' => is_null($title) ? $code : $title,
+        //         'message' => $message
+        //     ));
         http_response_code($code);
         exit();
     }
@@ -47,23 +86,6 @@ class Loader
         require(self::get('APPPATH') . 'controller/' . $handler . '.php');
         $className = $handler . 'Controller';
         return new $className();
-    }
-
-    public static function view($path, $vars = NULL)
-    {
-        is_null($vars) || extract($vars);
-        include(self::get('APPPATH') . 'view/' . $path . '.php');
-    }
-
-    public static function views($path, $option = NULL, $vars = NULL)
-    {
-        $option = array_merge(array(
-                'title' => 'ilex'
-            ), is_null($option) ? array() : $option);
-        self::view('general/header', array('title' => $option['title']));
-        self::view('general/nav');
-        self::view($path, $vars);
-        self::view('general/footer');
     }
 
 }
