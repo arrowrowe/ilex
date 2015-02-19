@@ -39,10 +39,10 @@ class Loader
         self::let('twigVars', array_merge(self::get('twigVars'), $vars));
     }
 
-    public static function render($template)
+    public static function render($path)
     {
         $twig = self::get('twig');
-        echo($twig->render($template, self::get('twigVars')));
+        echo($twig->render($path . '.twig', self::get('twigVars')));
     }
 
     public static function db()
@@ -61,19 +61,20 @@ class Loader
     }
 
     /*
-     * Show an error page.
+     * Show an error page and exit.
+     * Note: app/view/base/error.twig must exist.
      * @param int $code
      * @param str $message
      * @param str $title
-     * @todo Use twig to render an error page.
      */
     public static function error($code, $message = 'Oops!', $title = NULL)
     {
-        // @todo: Use twig to rewrite this.
-        // self::view('base/error', array(
-        //         'title' => is_null($title) ? $code : $title,
-        //         'message' => $message
-        //     ));
+        self::twig();
+        self::assign(array(
+                'title' => is_null($title) ? $code : $title,
+                'message' => $message
+            ));
+        self::render('base/error');
         http_response_code($code);
         exit();
     }
