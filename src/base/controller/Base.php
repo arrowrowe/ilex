@@ -1,9 +1,14 @@
 <?php
 
 
+/**
+ * Class BaseController
+ */
 class BaseController
 {
     protected $db = NULL;
+    public $last_error = array();
+    public $last_error_message = '';
 
     public function load_db()
     {

@@ -3,6 +3,13 @@
 namespace Ilex\Route;
 
 
+use Ilex\Loader;
+
+
+/**
+ * Class RouteLib
+ * @package Ilex\Route
+ */
 class RouteLib
 {
     public static function getPattern($description)
@@ -19,6 +26,10 @@ class RouteLib
 }
 
 
+/**
+ * Class RouteRule
+ * @package Ilex\Route
+ */
 class RouteRule
 {
     private $pattern;
@@ -47,12 +58,13 @@ class RouteRule
     {
         if (is_string($this->handler)) {
             return call_user_func_array(array(
-                \Ilex\loader::controller($this->handler),
+                Loader::controller($this->handler),
                 is_null($this->function) ? 'index' : $this->function
             ), $route->params);
-            return RouteLib::call($route, $this->handler, $this->function);
         } elseif (is_callable($this->handler)) {
             return call_user_func_array($this->handler, $route->params);
+        } else {
+            return NULL;
         }
     }
 
@@ -111,7 +123,7 @@ class Route
                     $this->params = explode('/', substr($uri, $index + 1));
                 }
                 ($function === '') && ($function = 'index');
-                $controller = \Ilex\loader::controller($handler);
+                $controller = Loader::controller($handler);
                 $controller->Route = $this;
                 if (method_exists($controller, $method . $function)) {
                     return call_user_func_array(array($controller, $method . $function), $this->params);
@@ -120,16 +132,17 @@ class Route
                 } elseif (method_exists($controller, 'resolve')) {
                     return $controller->resolve();
                 } else {
-                    return \Ilex\Loader::error(404);
+                    return Loader::error(404);
                 }
             }
         }
+        /** @var RouteRule $rule */
         foreach ($this->rules[$method] as $rule) {
             if ($rule->fit($this)) {
                 return $rule->handle($this);
             }
         }
-        return \Ilex\loader::error(404);
+        return Loader::error(404);
     }
 
 }

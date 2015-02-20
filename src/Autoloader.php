@@ -3,6 +3,10 @@
 namespace Ilex;
 
 
+/**
+ * Class Autoloader
+ * @package Ilex
+ */
 class Autoloader
 {
     public static function getRealPath($path)
@@ -22,11 +26,11 @@ class Autoloader
         $RUNTIMEPATH = self::getRealPath($RUNTIMEPATH);
 
         // Initialize the loader.
-        require_once($ILEXPATH . 'core/loader.php');
+        require_once($ILEXPATH . 'core/Loader.php');
         Loader::init($ILEXPATH, $APPPATH, $RUNTIMEPATH);
 
         // Initialize the route.
-        require_once($ILEXPATH . 'route/route.php');
+        require_once($ILEXPATH . 'route/Route.php');
         $Route = new Route\Route();
 
         // Configure the route.

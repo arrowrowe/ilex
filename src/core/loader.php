@@ -3,6 +3,10 @@
 namespace Ilex;
 
 
+/**
+ * Class Loader
+ * @package Ilex
+ */
 class Loader
 {
     private static $container = array();
@@ -41,6 +45,7 @@ class Loader
 
     public static function render($path)
     {
+        /** @var \Twig_Environment $twig The global twig environment we use. */
         $twig = self::get('twig');
         echo($twig->render($path . '.twig', self::get('twigVars')));
     }
@@ -60,12 +65,13 @@ class Loader
         }
     }
 
-    /*
+    /**
      * Show an error page and exit.
      * Note: app/view/base/error.twig must exist.
      * @param int $code
-     * @param str $message
-     * @param str $title
+     * @param string $message
+     * @param string $title
+     * @return NULL
      */
     public static function error($code, $message = 'Oops!', $title = NULL)
     {
