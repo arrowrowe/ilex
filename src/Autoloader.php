@@ -29,12 +29,15 @@ class Autoloader
         require_once($ILEXPATH . 'core/Loader.php');
         Loader::init($ILEXPATH, $APPPATH, $RUNTIMEPATH);
 
+        // Include the constant file.
+        include($APPPATH . 'config/const.php');
+
         // Initialize the route.
         require_once($ILEXPATH . 'route/Route.php');
         $Route = new Route\Route();
 
         // Configure the route.
-        require($APPPATH . 'config/route.php');
+        include($APPPATH . 'config/route.php');
 
         // Resolve.
         $Route->resolve($_SERVER['REQUEST_URI']);
