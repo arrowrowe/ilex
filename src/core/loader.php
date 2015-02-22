@@ -10,9 +10,10 @@ namespace Ilex;
 class Loader
 {
     private static $container = array();
-    private static function has($k)     { return isset(self::$container[$k]); }
-    private static function get($k)     { return self::$container[$k];        }
-    private static function let($k, $v) { return self::$container[$k] = $v;   }
+    private static function has($k)            { return isset(self::$container[$k]);    }
+    private static function get($k)            { return self::$container[$k];           }
+    private static function let($k, $v)        { return self::$container[$k]      = $v; }
+    private static function letTo($k, $kk, $v) { return self::$container[$k][$kk] = $v; }
 
     public static function init($ILEXPATH, $APPPATH, $RUNTIMEPATH)
     {
@@ -38,9 +39,13 @@ class Loader
         }
     }
 
-    public static function assign($vars)
+    public static function assign($vars, $val = NULL)
     {
-        self::let('twigVars', array_merge(self::get('twigVars'), $vars));
+        if (is_null($val)) {
+            self::let('twigVars', array_merge(self::get('twigVars'), $vars));
+        } else {
+            self::letTo('twigVars', $vars, $val);
+        }
     }
 
     public static function render($path)
@@ -55,13 +60,13 @@ class Loader
         if (self::has('db')) {
             return self::get('db');
         } else {
-            $mongo = new \MongoClient('127.0.0.1:27017', array(
-                    'username'          => 'admin',
-                    'password'          => 'admin',
-                    'db'                => 'test',
-                    'connectTimeoutMS'  => 2000
-                ));
-            return self::let('db', $mongo->selectDB('test'));
+            $mongo = new \MongoClient(SVR_MONGO_HOST . ':' . SVR_MONGO_PORT, array(
+                'username'          => SVR_MONGO_USER,
+                'password'          => SVR_MONGO_PASS,
+                'db'                => SVR_MONGO_DB,
+                'connectTimeoutMS'  => SVR_MONGO_TIMEOUT
+            ));
+            return self::let('db', $mongo->selectDB(SVR_MONGO_DB));
         }
     }
 
@@ -77,20 +82,23 @@ class Loader
     {
         self::twig();
         self::assign(array(
-                'title' => is_null($title) ? $code : $title,
-                'message' => $message
-            ));
+            'title' => is_null($title) ? $code : $title,
+            'message' => $message
+        ));
         self::render('base/error');
         http_response_code($code);
         exit();
     }
 
-    public static function controller($handler)
+    public static function controller($handler) { return self::loadWithBase($handler, 'controller'); }
+    public static function      model($handler) { return self::loadWithBase($handler,      'model'); }
+
+    private static function loadWithBase($handler, $type)
     {
-        require_once(self::get('ILEXPATH') . 'base/controller/Base.php');
-        require(self::get('APPPATH') . 'controller/' . $handler . '.php');
-        $className = $handler . 'Controller';
-        return new $className();
+        require_once(self::get('ILEXPATH') . 'base/' . $type . '/Base.php');
+        require(self::get('APPPATH') . $type . '/' . $handler . '.php');
+        $className = $handler . ucfirst($type);
+        return new $className;
     }
 
 }
