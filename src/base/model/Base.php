@@ -20,9 +20,9 @@ class BaseModel
         return is_null($this->db) ? ($this->db = Ilex\Loader::db()) : $this->db;
     }
 
-    public function init($collection)
+    public function selectCollection($name)
     {
-        $this->collection = $this->load_db()->selectCollection($collection);
+        return $this->collection = $this->load_db()->selectCollection($name);
     }
 
 }
