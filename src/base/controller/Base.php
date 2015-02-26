@@ -15,10 +15,6 @@ class BaseController
         return is_null($this->db) ? ($this->db = \Ilex\Loader::db()) : $this->db;
     }
 
-    public function load_twig()   { \Ilex\Loader::twig();        return $this; }
-    public function assign($vars) { \Ilex\Loader::assign($vars); return $this; }
-    public function render($path) { \Ilex\Loader::render($path); }
-
     public function validate($src, $validators)
     {
         $this->last_error = array();

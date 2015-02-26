@@ -23,42 +23,10 @@ class Loader
 
         self::let('controller', array());
         self::let('model', array());
-
-        self::let('twigVars', array());
     }
 
-    public static function twig()
-    {
-        if (!self::has('twig')) {
-            // Initialize an empty array for twig variables.
-            self::let('twigVars', array());
-            self::let('twig',
-                new \Twig_Environment(
-                    new \Twig_Loader_Filesystem(self::get('APPPATH') . 'view/'),
-                    array(
-                        'cache' => self::get('RUNTIMEPATH') . 'twig_compile/',
-                        'auto_reload' => TRUE,
-                    )
-                )
-            );
-        }
-    }
-
-    public static function assign($vars, $val = NULL)
-    {
-        if (is_null($val)) {
-            self::let('twigVars', array_merge(self::get('twigVars'), $vars));
-        } else {
-            self::letTo('twigVars', $vars, $val);
-        }
-    }
-
-    public static function render($path)
-    {
-        /** @var \Twig_Environment $twig The global twig environment we use. */
-        $twig = self::get('twig');
-        echo($twig->render($path . '.twig', self::get('twigVars')));
-    }
+    public static function APPPATH()     { return self::get('APPPATH');     }
+    public static function RUNTIMEPATH() { return self::get('RUNTIMEPATH'); }
 
     public static function db()
     {
@@ -78,25 +46,28 @@ class Loader
     /**
      * Show an error page and exit.
      * Note: app/view/base/error.twig must exist.
-     * @param int $code
+     * @param int $status
      * @param string $message
-     * @param string $title
+     * @param int $code
      * @return NULL
      */
-    public static function error($code, $message = 'Oops!', $title = NULL)
+    public static function error($status, $message = 'Oops!', $code = 1)
     {
-        self::twig();
-        self::assign(array(
-            'title' => is_null($title) ? $code : $title,
-            'message' => $message
-        ));
-        self::render('base/error');
-        http_response_code($code);
+        echo(json_encode(array('code' => $code, 'message' => $message)));
+        http_response_code($status);
         exit();
     }
 
     public static function controller($handler) { return self::loadWithBase($handler, 'controller'); }
     public static function      model($handler) { return self::loadWithBase($handler,      'model'); }
+
+    public static function isModelLoaded($handler) { return self::isLoadedWithBase($handler, 'model'); }
+
+    private static function isLoadedWithBase($handler, $type)
+    {
+        $typeEntities = self::get($type);
+        return isset($typeEntities[$handler]);
+    }
 
     private static function loadWithBase($handler, $type)
     {
