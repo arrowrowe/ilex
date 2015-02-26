@@ -132,7 +132,7 @@ class Route
                 } elseif (method_exists($controller, 'resolve')) {
                     return $controller->resolve();
                 } else {
-                    return Loader::error(404);
+                    throw new \Exception('Page not found', 404);
                 }
             }
         }
@@ -142,7 +142,7 @@ class Route
                 return $rule->handle($this);
             }
         }
-        return Loader::error(404);
+        throw new \Exception('Page not found', 404);
     }
 
 }

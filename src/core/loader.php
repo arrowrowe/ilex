@@ -43,21 +43,6 @@ class Loader
         }
     }
 
-    /**
-     * Show an error page and exit.
-     * Note: app/view/base/error.twig must exist.
-     * @param int $status
-     * @param string $message
-     * @param int $code
-     * @return NULL
-     */
-    public static function error($status, $message = 'Oops!', $code = 1)
-    {
-        echo(json_encode(array('code' => $code, 'message' => $message)));
-        http_response_code($status);
-        exit();
-    }
-
     public static function controller($handler) { return self::loadWithBase($handler, 'controller'); }
     public static function      model($handler) { return self::loadWithBase($handler,      'model'); }
 
