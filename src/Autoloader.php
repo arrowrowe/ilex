@@ -40,7 +40,7 @@ class Autoloader
         include($APPPATH . 'config/route.php');
 
         // Resolve.
-        $Route->resolve($_SERVER['REQUEST_URI']);
+        $Route->resolve(isset($_GET['_url']) ? $_GET['_url'] : '/');
     }
 
 }

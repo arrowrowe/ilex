@@ -23,6 +23,40 @@ class RouteLib
         return '@^' . $description . '$@';
     }
 
+    /**
+     * @param $uri
+     * @return array|string Return [$function, $params] if parameters found.
+     */
+    public static function getFunction($uri)
+    {
+        // Look for the first '/'.
+        $index = strpos($uri, '/');
+        // Begins with '/'.
+        if ($index === 0) {
+            // Cut the string
+            if (($uri = substr($uri, 1)) === FALSE) {
+                // Fail to cut cause the uri is '/' itself.
+                $uri = '';
+                $index = FALSE;
+            } else {
+                // Now the first '/' is excluded. Look for the fist '/' again.
+                $index = strpos($uri, '/');
+            }
+        }
+        // '/' not found.
+        if ($index === FALSE) {
+            $function = $uri;
+            $params = array();
+        } else {
+            $function = substr($uri, 0, $index);
+            $params = explode('/', substr($uri, $index + 1));
+        }
+        if ($function === '') {
+            $function = 'index';
+        }
+        return count($params) ? array($function, $params) : $function;
+    }
+
 }
 
 
@@ -104,25 +138,14 @@ class Route
         foreach ($this->rulesController as $description => $handler) {
             $length = strlen($description);
             if (substr($uri, 0, $length) === $description) {
-                if (($this->uri = $uri = substr($uri, $length)) === FALSE) {
-                    $this->uri = $uri = '/';
+                if (($this->uri = substr($uri, $length)) === FALSE) {
+                    $this->uri = '';
                 }
-                $index = strpos($this->uri, '/');
-                if ($index === 0) {
-                    if (($uri = substr($uri, 1)) === FALSE) {
-                        $uri = '';
-                        $index = FALSE;
-                    } else {
-                        $index = strpos($uri, '/');
-                    }
+                $function = RouteLib::getFunction($this->uri);
+                if (is_array($function)) {
+                    $this->params = $function[1];
+                    $function = $function[0];
                 }
-                if ($index === FALSE) {
-                    $function = $uri;
-                } else {
-                    $function = substr($uri, 0, $index);
-                    $this->params = explode('/', substr($uri, $index + 1));
-                }
-                ($function === '') && ($function = 'index');
                 $controller = Loader::controller($handler);
                 $controller->Route = $this;
                 if (method_exists($controller, $method . $function)) {
