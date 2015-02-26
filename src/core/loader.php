@@ -20,6 +20,11 @@ class Loader
         self::let('ILEXPATH', $ILEXPATH);
         self::let('APPPATH', $APPPATH);
         self::let('RUNTIMEPATH', $RUNTIMEPATH);
+
+        self::let('controller', array());
+        self::let('model', array());
+
+        self::let('twigVars', array());
     }
 
     public static function twig()
@@ -95,10 +100,17 @@ class Loader
 
     private static function loadWithBase($handler, $type)
     {
-        require_once(self::get('ILEXPATH') . 'base/' . $type . '/Base.php');
-        require(self::get('APPPATH') . $type . '/' . $handler . '.php');
-        $className = $handler . ucfirst($type);
-        return new $className;
+        // Ensure that for each model only one entity is loaded.
+        $typeEntities = self::get($type);
+        if (isset($typeEntities[$handler])) {
+            return $typeEntities[$handler];
+        } else {
+            require_once(self::get('ILEXPATH') . 'base/' . $type . '/Base.php');
+            require(self::get('APPPATH') . $type . '/' . $handler . '.php');
+            $className = $handler . ucfirst($type);
+            $class = new $className;
+            return self::letTo($type, $handler, $class);
+        }
     }
 
 }
