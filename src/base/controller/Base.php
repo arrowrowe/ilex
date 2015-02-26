@@ -10,9 +10,15 @@ class BaseController
     public $last_error = array();
     public $last_error_message = '';
 
-    public function load_db()
+    protected function load_db()
     {
         return is_null($this->db) ? ($this->db = \Ilex\Loader::db()) : $this->db;
+    }
+
+    protected function load_model($path)
+    {
+        $name = \Ilex\Loader::getHandlerFromPath($path);
+        return is_null($this->$name) ? ($this->$name = Ilex\Loader::model($path)) : $this->$name;
     }
 
     public function validate($src, $validators)

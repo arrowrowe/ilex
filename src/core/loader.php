@@ -43,30 +43,36 @@ class Loader
         }
     }
 
-    public static function controller($handler) { return self::loadWithBase($handler, 'controller'); }
-    public static function      model($handler) { return self::loadWithBase($handler,      'model'); }
+    public static function controller($path) { return self::loadWithBase($path, 'controller'); }
+    public static function      model($path) { return self::loadWithBase($path,      'model'); }
 
-    public static function isModelLoaded($handler) { return self::isLoadedWithBase($handler, 'model'); }
+    public static function isModelLoaded($path) { return self::isLoadedWithBase($path, 'model'); }
 
-    private static function isLoadedWithBase($handler, $type)
+    private static function isLoadedWithBase($path, $type)
     {
         $typeEntities = self::get($type);
-        return isset($typeEntities[$handler]);
+        return isset($typeEntities[$path]);
     }
 
-    private static function loadWithBase($handler, $type)
+    private static function loadWithBase($path, $type)
     {
         // Ensure that for each model only one entity is loaded.
         $typeEntities = self::get($type);
-        if (isset($typeEntities[$handler])) {
-            return $typeEntities[$handler];
+        if (isset($typeEntities[$path])) {
+            return $typeEntities[$path];
         } else {
             require_once(self::get('ILEXPATH') . 'base/' . $type . '/Base.php');
-            require(self::get('APPPATH') . $type . '/' . $handler . '.php');
-            $className = $handler . ucfirst($type);
+            require(self::get('APPPATH') . $type . '/' . $path . '.php');
+            $className = self::getHandlerFromPath($path) . ucfirst($type);
             $class = new $className;
-            return self::letTo($type, $handler, $class);
+            return self::letTo($type, $path, $class);
         }
+    }
+
+    public static function getHandlerFromPath($path)
+    {
+        $handler = strrchr($path, '/');
+        return $handler === FALSE ? $path : substr($handler, 1);
     }
 
 }
