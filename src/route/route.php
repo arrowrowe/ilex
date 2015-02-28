@@ -155,7 +155,8 @@ class Route
                 } elseif (method_exists($controller, 'resolve')) {
                     return $controller->resolve();
                 } else {
-                    throw new \Exception('Page not found', 404);
+                    $this->uri = $uri;
+                    continue;
                 }
             }
         }
