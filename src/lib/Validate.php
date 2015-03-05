@@ -8,9 +8,9 @@ class Validate
 
     public static function batch($values, $rulePackages)
     {
-        $length = min(count($values), count($rulePackages));
+        $rulePackageCount = count($rulePackages);
         $errors = array();
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $rulePackageCount; $i++) {
             $rulePackage = $rulePackages[$i];
             $name = isset($rulePackage['name']) ? $rulePackage['name'] : $i;
 
