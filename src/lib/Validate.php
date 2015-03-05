@@ -13,6 +13,29 @@ class Validate
         for ($i = 0; $i < $length; $i++) {
             $rulePackage = $rulePackages[$i];
             $name = isset($rulePackage['name']) ? $rulePackage['name'] : $i;
+
+            if (isset($rulePackage['require'])) {
+                $rule = $rulePackage['require'];
+                if (!isset($values[$name])) {
+                    $errors[$name] = array('require' => $rule['message']);
+                    continue;
+                }
+                if (isset($rule['type'])) {
+                    switch ($rule['type']) {
+                        case 'int':
+                            $values[$name] = intval($values[$name]);
+                            break;
+                        case 'float':
+                            $values[$name] = floatval($values[$name]);
+                    }
+                }
+            } elseif (!isset($values[$name])) {
+                if (isset($rulePackage['default'])) {
+                    $values[$name] = $rulePackage['default'];
+                }
+                continue;
+            }
+
             $results = static::package($values[$name], $rulePackage);
             if ($results !== TRUE) {
                 $errors[$name] = $results;
