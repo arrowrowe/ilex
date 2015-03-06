@@ -130,9 +130,9 @@ class Route
         $this->rulesController[$description] = $handler;
     }
 
-    public function resolve($uri)
+    public function resolve($uri, $method = NULL)
     {
-        $method = $_SERVER['REQUEST_METHOD'];
+        is_null($method) AND ($method = $_SERVER['REQUEST_METHOD']);
         $this->uri = $uri;
         $this->params = array();
         foreach ($this->rulesController as $description => $handler) {

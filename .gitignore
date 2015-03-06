@@ -1,6 +1,9 @@
-# Composer
+# composer
 composer.lock
 vendor/
 
 # phpstorm
 .idea/
+
+# runtime
+tests/runtime/

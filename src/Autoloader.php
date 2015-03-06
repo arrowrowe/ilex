@@ -19,7 +19,7 @@ class Autoloader
         return $path;
     }
 
-    public static function run($APPPATH, $RUNTIMEPATH)
+    public static function run($APPPATH, $RUNTIMEPATH, $url = NULL, $method = NULL)
     {
         $ILEXPATH = self::getRealPath(__DIR__);
         $APPPATH = self::getRealPath($APPPATH);
@@ -40,7 +40,12 @@ class Autoloader
         include($APPPATH . 'config/route.php');
 
         // Resolve.
-        return $Route->resolve(isset($_GET['_url']) ? $_GET['_url'] : '/');
+        return $Route->resolve(
+            is_null($url) ?
+            (isset($_GET['_url']) ? $_GET['_url'] : '/') :
+            $url,
+            $method
+        );
     }
 
 }
