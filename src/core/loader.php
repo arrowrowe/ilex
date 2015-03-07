@@ -72,11 +72,10 @@ class Loader
 
     private static function load($path, $type)
     {
-        $name = self::getHandlerFromPath($path);
         foreach (array(
             'app' => array(
                 'path' => self::get('APPPATH') . $type . '/' . $path . $type . '.php',
-                'name' => $name . $type
+                'name' => self::getHandlerFromPath($path) . $type
             ),
             'ilex' => array(
                 'path' => self::get('ILEXPATH') . 'Base/' . $type . '/' . $path . '.php',
