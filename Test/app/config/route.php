@@ -10,7 +10,7 @@ $Route->get('/', function () {
 });
 
 $Route->post('/user/(any)', function ($name) {
-    /** @var InputModel $Input */
+    /** @var \Ilex\Base\Model\sys\Input $Input */
     $Input = Loader::model('sys/Input');
     echo('Hello ' . $Input->post('title', 'Guest') . ' ' . $name . '!');
 });

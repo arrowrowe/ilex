@@ -22,6 +22,11 @@ class Container
         return TRUE;
     }
 
+    public function __get($key)
+    {
+        return $this->get($key, NULL);
+    }
+
     public function get($key, $default)
     {
         return is_null($key) ?
