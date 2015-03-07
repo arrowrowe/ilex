@@ -6,7 +6,7 @@ namespace Ilex\lib;
 class Validate
 {
 
-    public static function batch($values, $rulePackages)
+    public static function batch(&$values, $rulePackages)
     {
         $rulePackageCount = count($rulePackages);
         $errors = array();
@@ -17,7 +17,7 @@ class Validate
             if (isset($rulePackage['require'])) {
                 $rule = $rulePackage['require'];
                 if (!isset($values[$name])) {
-                    $errors[$name] = array('require' => $rule['message']);
+                    $errors[$name] = array($rule['message']);
                     continue;
                 }
                 if (isset($rule['type'])) {
@@ -48,7 +48,7 @@ class Validate
     {
         $errors = array();
         foreach ($rulePackage as $ruleName => $rule) {
-            if ($ruleName === 'name') {
+            if (in_array($ruleName, array('name', 'require'))) {
                 continue;
             }
             $result = static::rule($value, $ruleName, $rule, $rule['message']);
