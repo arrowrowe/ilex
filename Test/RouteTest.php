@@ -24,4 +24,19 @@ class RouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('You\'re looking at Project-23', Test::run('/project/23'), 'Fail to call one of the controller\'s functions.');
     }
 
+    public function testController()
+    {
+        $this->assertEquals('about', Test::run('/about'));
+        $this->assertEquals('about', Test::run('/about/'));
+        $this->assertEquals('about', Test::run('/about//'));
+        $this->assertEquals('about', Test::run('/about/index'));
+        $this->assertEquals('about', Test::run('/about/index/'));
+        $this->assertEquals('about', Test::run('/about/index//'));
+        $this->assertEquals('Join tech!', Test::run('/about/join'));
+        $this->assertEquals('Join tech!', Test::run('/about/join/'));
+        $this->assertEquals('Join whatever!', Test::run('/about/join/whatever'));
+        $this->assertEquals('Join whatever!', Test::run('/about/join/whatever/'));
+        $this->assertEquals('Join whatever!', Test::run('/about/join/whatever//'));
+    }
+
 }

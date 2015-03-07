@@ -17,7 +17,7 @@ $Route->post('/user/(any)', function ($name) {
 
 $Route->get('/projects', 'Project');
 $Route->get('/project/(num)', 'Project', 'view');
-$Route->controller('/project', 'Project');
+$Route->controller('/about', 'About');
 
 $Route->get('.*', function () {
     echo('Oops, 404!');

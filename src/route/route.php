@@ -49,7 +49,11 @@ class RouteLib
             $params = array();
         } else {
             $function = substr($uri, 0, $index);
-            $params = explode('/', substr($uri, $index + 1));
+            if (($paramRaw = substr($uri, $index + 1)) === FALSE) {
+                $params = array();
+            } else {
+                $params = explode('/', substr($uri, $index + 1));
+            }
         }
         if ($function === '') {
             $function = 'index';
