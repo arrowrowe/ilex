@@ -4,27 +4,20 @@
 namespace Ilex;
 
 
-require_once(__DIR__ . '/../vendor/autoload.php');
-require_once(__DIR__ . '/../src/Autoloader.php');
-
-
-Test::boot();
-
-
 /**
  * Class Test
  * @package Ilex
  */
 class Test
 {
-    /** @var Route\Route */
+    /** @var \Ilex\Route\Route */
     private static $Route;
     /** @var \InputModel */
     private static $Input;
 
-    public static function boot()
+    public static function boot($APPPATH, $RUNTIMEPATH)
     {
-        Autoloader::initialize(__DIR__ . '/app', __DIR__ . '/runtime');
+        Autoloader::initialize($APPPATH, $RUNTIMEPATH);
         static::$Route = Autoloader::route();
         static::$Input = Loader::model('sys/Input');
     }
