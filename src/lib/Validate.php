@@ -72,6 +72,9 @@ class Validate
 
     public static function re($value, $rule) { return preg_match($rule['pattern'], $value) === 1; }
 
+    public static function eq($value, $rule)   { return $value ==  $rule['value']; }
+    public static function same($value, $rule) { return $value === $rule['value']; }
+
     public static function    int_gt($value, $rule) { return   intval($value) >  $rule['value']; }
     public static function    int_lt($value, $rule) { return   intval($value) <  $rule['value']; }
     public static function    int_ge($value, $rule) { return   intval($value) >= $rule['value']; }
@@ -86,4 +89,5 @@ class Validate
     public static function length_lt($value, $rule) { return   strlen($value) <  $rule['value']; }
     public static function length_ge($value, $rule) { return   strlen($value) >= $rule['value']; }
     public static function length_le($value, $rule) { return   strlen($value) <= $rule['value']; }
+    public static function length_eq($value, $rule) { return   strlen($value) === $rule['value']; }
 }
