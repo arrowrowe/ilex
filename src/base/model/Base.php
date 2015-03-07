@@ -1,15 +1,17 @@
 <?php
 
 
+namespace Ilex\Base\Model;
+
 use \Ilex\Core\Loader;
 
 
 /**
- * Class BaseModel
+ * Class Base
  * @property \MongoDB $db database
  * @property \MongoCollection $collection
  */
-class BaseModel
+class Base
 {
     protected $db = NULL;
     protected $collection = NULL;

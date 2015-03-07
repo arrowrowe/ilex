@@ -1,13 +1,15 @@
 <?php
 
 
+namespace Ilex\Base\Controller;
+
 use \Ilex\Core\Loader;
 
 
 /**
- * Class BaseController
+ * Class Base
  */
-class BaseController
+class Base
 {
     protected $db = NULL;
     public $last_error = array();

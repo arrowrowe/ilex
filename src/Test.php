@@ -12,7 +12,7 @@ class Test
 {
     /** @var \Ilex\Route\Route */
     private static $Route;
-    /** @var \InputModel */
+    /** @var \Ilex\Base\Model\sys\Input */
     private static $Input;
 
     public static function boot($APPPATH, $RUNTIMEPATH)

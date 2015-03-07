@@ -21,8 +21,8 @@ class Loader
         self::let('APPPATH', $APPPATH);
         self::let('RUNTIMEPATH', $RUNTIMEPATH);
 
-        self::let('controller', array());
-        self::let('model', array());
+        self::let('Controller', array());
+        self::let('Model', array());
     }
 
     public static function APPPATH()     { return self::get('APPPATH');     }
@@ -43,10 +43,10 @@ class Loader
         }
     }
 
-    public static function controller($path) { return self::loadWithBase($path, 'controller'); }
-    public static function      model($path) { return self::loadWithBase($path,      'model'); }
+    public static function controller($path) { return self::loadWithBase($path, 'Controller'); }
+    public static function      model($path) { return self::loadWithBase($path,      'Model'); }
 
-    public static function isModelLoaded($path) { return self::isLoadedWithBase($path, 'model'); }
+    public static function isModelLoaded($path) { return self::isLoadedWithBase($path, 'Model'); }
 
     private static function isLoadedWithBase($path, $type)
     {
@@ -61,9 +61,10 @@ class Loader
         if (isset($typeEntities[$path])) {
             return $typeEntities[$path];
         } else {
-            require_once(self::get('ILEXPATH') . 'base/' . $type . '/Base.php');
-            static::load($path, $type);
-            $className = self::getHandlerFromPath($path) . ucfirst($type);
+            $className = static::load($path, $type);
+            if ($className === FALSE) {
+                throw new \Exception(ucfirst($type) . ' ' . $path . ' not found.');
+            }
             $class = new $className;
             return self::letTo($type, $path, $class);
         }
@@ -71,13 +72,20 @@ class Loader
 
     private static function load($path, $type)
     {
+        $name = self::getHandlerFromPath($path);
         foreach (array(
-            'app'  => self::get('APPPATH') . $type . '/' . $path . '.php',
-            'ilex' => self::get('ILEXPATH') . 'base/' . $type . '/' . $path . '.php'
-        ) as $fullpath) {
-            if (file_exists($fullpath)) {
-                include($fullpath);
-                return TRUE;
+            'app' => array(
+                'path' => self::get('APPPATH') . $type . '/' . $path . '.php',
+                'name' => $name
+            ),
+            'ilex' => array(
+                'path' => self::get('ILEXPATH') . 'Base/' . $type . '/' . $path . '.php',
+                'name' => '\\Ilex\\Base\\Model\\' . str_replace('/', '\\', $path)
+            )
+        ) as $item) {
+            if (file_exists($item['path'])) {
+                include($item['path']);
+                return $item['name'];
             }
         }
         return FALSE;
