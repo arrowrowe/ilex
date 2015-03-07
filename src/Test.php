@@ -10,15 +10,12 @@ namespace Ilex;
  */
 class Test
 {
-    /** @var \Ilex\Route\Route */
-    private static $Route;
     /** @var \Ilex\Base\Model\sys\Input */
     private static $Input;
 
     public static function boot($APPPATH, $RUNTIMEPATH)
     {
         Autoloader::initialize($APPPATH, $RUNTIMEPATH);
-        static::$Route = Autoloader::route();
         static::$Input = Core\Loader::model('sys/Input');
     }
 
@@ -26,7 +23,7 @@ class Test
     {
         static::$Input->clear()->merge('post', $post);
         ob_start();
-        static::$Route->resolve($url, $method);
+        Autoloader::route($method)->resolve($url, $method);
         return ob_get_clean();
     }
 }

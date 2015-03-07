@@ -34,9 +34,9 @@ class Autoloader
         include_once($APPPATH . 'config/const.php');
     }
 
-    public static function route()
+    public static function route($method = '')
     {
-        $Route = new Route\Route();
+        $Route = new Route\Route($method);
         include(Loader::APPPATH() . 'config/route.php');
         return $Route;
     }
@@ -44,9 +44,8 @@ class Autoloader
     public static function run($APPPATH, $RUNTIMEPATH)
     {
         static::initialize($APPPATH, $RUNTIMEPATH);
-        return static::route()->resolve(
-            isset($_GET['_url']) ? $_GET['_url'] : '/',
-            $_SERVER['REQUEST_METHOD']
+        return static::route($_SERVER['REQUEST_METHOD'])->resolve(
+            isset($_GET['_url']) ? $_GET['_url'] : '/'
         );
     }
 

@@ -111,23 +111,24 @@ class RouteRule
  */
 class Route
 {
-    private $rules = array(
-            'GET' => array(),
-            'POST' => array(),
-            'PUT' => array(),
-        );
+    private $rules = array();
     private $rulesController = array();
     public $uri = '';
-    public $method = '';
+    public $method;
     public $params = array();
 
-    public function  get($description, $handler, $function = NULL) { $this->_add_rule( 'GET', $description, $handler, $function); }
-    public function post($description, $handler, $function = NULL) { $this->_add_rule('POST', $description, $handler, $function); }
-    public function  put($description, $handler, $function = NULL) { $this->_add_rule( 'PUT', $description, $handler, $function); }
-
-    private function _add_rule($method, $description, $handler, $function)
+    public function __construct($method = '')
     {
-        $this->rules[$method][] = new RouteRule($description, $handler, $function);
+        $this->method = $method;
+    }
+
+    public function  get($description, $handler, $function = NULL) { $this->method === 'GET'  AND $this->_add_rule($description, $handler, $function); }
+    public function post($description, $handler, $function = NULL) { $this->method === 'POST' AND $this->_add_rule($description, $handler, $function); }
+    public function  put($description, $handler, $function = NULL) { $this->method === 'PUT'  AND $this->_add_rule($description, $handler, $function); }
+
+    private function _add_rule($description, $handler, $function)
+    {
+        $this->rules[] = new RouteRule($description, $handler, $function);
     }
 
     public function controller($description, $handler)
@@ -135,10 +136,9 @@ class Route
         $this->rulesController[$description] = $handler;
     }
 
-    public function resolve($uri, $method)
+    public function resolve($uri)
     {
         $this->uri = $uri;
-        $this->method = $method;
         $this->params = array();
         foreach ($this->rulesController as $description => $handler) {
             $length = strlen($description);
@@ -153,8 +153,8 @@ class Route
                 }
                 $controller = Loader::controller($handler);
                 $controller->Route = $this;
-                if (method_exists($controller, $method . $function)) {
-                    return call_user_func_array(array($controller, $method . $function), $this->params);
+                if (method_exists($controller, $this->method . $function)) {
+                    return call_user_func_array(array($controller, $this->method . $function), $this->params);
                 } elseif (method_exists($controller, $function)) {
                     return call_user_func_array(array($controller, $function), $this->params);
                 } elseif (method_exists($controller, 'resolve')) {
@@ -166,7 +166,7 @@ class Route
             }
         }
         /** @var RouteRule $rule */
-        foreach ($this->rules[$method] as $rule) {
+        foreach ($this->rules as $rule) {
             if ($rule->fit($this)) {
                 return $rule->handle($this);
             }
