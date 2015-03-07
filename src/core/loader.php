@@ -75,8 +75,8 @@ class Loader
         $name = self::getHandlerFromPath($path);
         foreach (array(
             'app' => array(
-                'path' => self::get('APPPATH') . $type . '/' . $path . '.php',
-                'name' => $name
+                'path' => self::get('APPPATH') . $type . '/' . $path . $type . '.php',
+                'name' => $name . $type
             ),
             'ilex' => array(
                 'path' => self::get('ILEXPATH') . 'Base/' . $type . '/' . $path . '.php',
