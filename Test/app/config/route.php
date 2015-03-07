@@ -14,3 +14,11 @@ $Route->post('/user/(any)', function ($name) {
     $Input = Loader::model('sys/Input');
     echo('Hello ' . $Input->post('title', 'Guest') . ' ' . $name . '!');
 });
+
+$Route->get('/projects', 'Project');
+$Route->get('/project/(num)', 'Project', 'view');
+$Route->controller('/project', 'Project');
+
+$Route->get('.*', function () {
+    echo('Oops, 404!');
+});

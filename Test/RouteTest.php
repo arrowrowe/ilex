@@ -17,4 +17,11 @@ class RouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Hello Mr. Someone!', Test::run('/user/Someone', 'POST', array('title' => 'Mr.')), 'Post fails.');
     }
 
+    public function testCallingController()
+    {
+        $this->assertEquals('See all projects.', Test::run('/projects'), 'Fail to visit the controller\'s index page.');
+        $this->assertEquals('Oops, 404!', Test::run('/project/oops'), 'Fail to report 404 for invalid url pattern.');
+        $this->assertEquals('You\'re looking at Project-23', Test::run('/project/23'), 'Fail to call one of the controller\'s functions.');
+    }
+
 }
