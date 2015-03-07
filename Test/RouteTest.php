@@ -37,6 +37,8 @@ class RouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Join whatever!', Test::run('/about/join/whatever'));
         $this->assertEquals('Join whatever!', Test::run('/about/join/whatever/'));
         $this->assertEquals('Join whatever!', Test::run('/about/join/whatever//'));
+        $this->assertEquals('Welcome to whatever, Jack!', Test::run('/about/join/whatever/', 'POST'));
+        $this->assertEquals('Welcome to whatever, John!', Test::run('/about/join/whatever/', 'POST', array('name' => 'John')));
     }
 
 }
