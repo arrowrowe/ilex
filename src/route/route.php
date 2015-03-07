@@ -114,6 +114,7 @@ class Route
         );
     private $rulesController = array();
     public $uri = '';
+    public $method = '';
     public $params = array();
 
     public function  get($description, $handler, $function = NULL) { $this->_add_rule( 'GET', $description, $handler, $function); }
@@ -130,10 +131,10 @@ class Route
         $this->rulesController[$description] = $handler;
     }
 
-    public function resolve($uri, $method = NULL)
+    public function resolve($uri, $method)
     {
-        is_null($method) AND ($method = $_SERVER['REQUEST_METHOD']);
         $this->uri = $uri;
+        $this->method = $method;
         $this->params = array();
         foreach ($this->rulesController as $description => $handler) {
             $length = strlen($description);

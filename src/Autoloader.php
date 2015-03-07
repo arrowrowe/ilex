@@ -19,7 +19,7 @@ class Autoloader
         return $path;
     }
 
-    public static function run($APPPATH, $RUNTIMEPATH, $url = NULL, $method = NULL)
+    public static function initialize($APPPATH, $RUNTIMEPATH)
     {
         $ILEXPATH = self::getRealPath(__DIR__);
         $APPPATH = self::getRealPath($APPPATH);
@@ -30,21 +30,25 @@ class Autoloader
         Loader::init($ILEXPATH, $APPPATH, $RUNTIMEPATH);
 
         // Include the constant file.
-        include($APPPATH . 'config/const.php');
+        include_once($APPPATH . 'config/const.php');
 
         // Initialize the route.
         require_once($ILEXPATH . 'route/Route.php');
+    }
+
+    public static function route()
+    {
         $Route = new Route\Route();
+        include(Loader::APPPATH() . 'config/route.php');
+        return $Route;
+    }
 
-        // Configure the route.
-        include($APPPATH . 'config/route.php');
-
-        // Resolve.
-        return $Route->resolve(
-            is_null($url) ?
-            (isset($_GET['_url']) ? $_GET['_url'] : '/') :
-            $url,
-            $method
+    public static function run($APPPATH, $RUNTIMEPATH)
+    {
+        static::initialize($APPPATH, $RUNTIMEPATH);
+        return static::route()->resolve(
+            isset($_GET['_url']) ? $_GET['_url'] : '/',
+            $_SERVER['REQUEST_METHOD']
         );
     }
 
