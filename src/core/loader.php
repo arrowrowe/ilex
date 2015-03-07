@@ -62,11 +62,25 @@ class Loader
             return $typeEntities[$path];
         } else {
             require_once(self::get('ILEXPATH') . 'base/' . $type . '/Base.php');
-            require(self::get('APPPATH') . $type . '/' . $path . '.php');
+            static::load($path, $type);
             $className = self::getHandlerFromPath($path) . ucfirst($type);
             $class = new $className;
             return self::letTo($type, $path, $class);
         }
+    }
+
+    private static function load($path, $type)
+    {
+        foreach (array(
+            'app'  => self::get('APPPATH') . $type . '/' . $path . '.php',
+            'ilex' => self::get('ILEXPATH') . 'base/' . $type . '/' . $path . '.php'
+        ) as $fullpath) {
+            if (file_exists($fullpath)) {
+                include($fullpath);
+                return TRUE;
+            }
+        }
+        return FALSE;
     }
 
     public static function getHandlerFromPath($path)
