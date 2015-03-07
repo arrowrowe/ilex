@@ -1,6 +1,6 @@
 <?php
 
-namespace Ilex;
+namespace Ilex\Core;
 
 
 /**

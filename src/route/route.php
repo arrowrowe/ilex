@@ -3,7 +3,7 @@
 namespace Ilex\Route;
 
 
-use Ilex\Loader;
+use Ilex\Core\Loader;
 
 
 /**

@@ -3,6 +3,8 @@
 namespace Ilex;
 
 
+use Ilex\Core\Loader;
+
 /**
  * Class Autoloader
  * @package Ilex
@@ -26,14 +28,10 @@ class Autoloader
         $RUNTIMEPATH = self::getRealPath($RUNTIMEPATH);
 
         // Initialize the loader.
-        require_once($ILEXPATH . 'core/Loader.php');
         Loader::init($ILEXPATH, $APPPATH, $RUNTIMEPATH);
 
         // Include the constant file.
         include_once($APPPATH . 'config/const.php');
-
-        // Initialize the route.
-        require_once($ILEXPATH . 'route/Route.php');
     }
 
     public static function route()
