@@ -8,6 +8,7 @@ use \Ilex\Core\Loader;
 
 /**
  * Class Base
+ * @package Ilex\Base\Controller
  */
 class Base
 {

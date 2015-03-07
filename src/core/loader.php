@@ -5,7 +5,7 @@ namespace Ilex\Core;
 
 /**
  * Class Loader
- * @package Ilex
+ * @package Ilex\Core
  */
 class Loader
 {

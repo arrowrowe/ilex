@@ -3,6 +3,10 @@
 namespace Ilex\Base\Model\sys;
 
 
+/**
+ * Class Container
+ * @package Ilex\Base\Model\sys
+ */
 class Container
 {
     private $array;

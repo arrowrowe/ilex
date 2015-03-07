@@ -6,6 +6,10 @@ namespace Ilex\Base\Model\sys;
 use Ilex\Base\Model\Base;
 
 
+/**
+ * Class Input
+ * @package Ilex\Base\Model\sys
+ */
 class Input extends Base
 {
     public $get;

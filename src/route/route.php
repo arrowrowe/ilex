@@ -105,6 +105,10 @@ class RouteRule
 }
 
 
+/**
+ * Class Route
+ * @package Ilex\Route
+ */
 class Route
 {
     private $rules = array(

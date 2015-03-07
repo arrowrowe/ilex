@@ -3,6 +3,11 @@
 
 namespace Ilex\lib;
 
+
+/**
+ * Class Validate
+ * @package Ilex\lib
+ */
 class Validate
 {
 
