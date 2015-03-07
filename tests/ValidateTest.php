@@ -35,8 +35,9 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(
             'username' => array('NAME_REQUIRED'),
             'password' => array('PASSWORD_LENGTH_LT_6')
-        ), $result);
-        $this->assertArrayHasKey('gender', $data);
-        $this->assertEquals('male', $data['gender']);
+        ), $result, 'Validation result does not come out as expected.');
+        $this->assertArrayHasKey('gender', $data, 'Validation\'s default fails.');
+        $this->assertEquals('male', $data['gender'], 'Validation\'s default fails.');
+        $this->assertSame(23, $data['age'], 'Validation\'s type requirement fails.');
     }
 }
