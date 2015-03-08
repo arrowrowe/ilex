@@ -16,7 +16,8 @@ class RouteLib
     {
         foreach (array(
                 '(any)' => '([^/]+?)',
-                '(num)' => '([0-9]+?)'
+                '(num)' => '([0-9]+?)',
+                '(all)' => '(.+?)'
             ) as $k => $v) {
             $description = str_replace($k, $v, $description);
         }
@@ -112,9 +113,12 @@ class Route
 
     private function handle($handler, $function)
     {
-        if (is_string($handler)) {
+        if (is_string($handler) OR !($handler instanceof \Closure)) {
             $this->end(
-                call_user_func_array(array(Loader::controller($handler), is_null($function) ? 'index' : $function), $this->params)
+                call_user_func_array(array(
+                    is_string($handler) ? Loader::controller($handler) : $handler,
+                    is_null($function) ? 'index' : $function
+                ), $this->params)
             );
         } elseif (is_callable($handler)) {
             $this->end(
@@ -151,6 +155,7 @@ class Route
             $fn = $function;
         } elseif (method_exists($controller, 'resolve')) {
             $fn = 'resolve';
+            ($this->uri === '') AND ($this->uri = '/');
             $params = array($this);
         } else {
             $this->uri = $uri;
