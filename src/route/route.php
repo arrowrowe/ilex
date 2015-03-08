@@ -153,6 +153,7 @@ class Route
             $fn = 'resolve';
             $params = array($this);
         } else {
+            $this->uri = $uri;
             return FALSE;
         }
 
