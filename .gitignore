@@ -6,4 +6,7 @@ vendor/
 .idea/
 
 # runtime
-tests/runtime/
+Test/runtime/
+
+# public
+Test/public/
