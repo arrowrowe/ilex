@@ -70,8 +70,10 @@ class RouteLib
 class Route
 {
     private $uri;
+    private $uris = array();
     private $method;
     private $settled = FALSE;
+    private $cancelled = FALSE;
     private $result = NULL;
     private $params = array();
 
@@ -87,6 +89,7 @@ class Route
     public function post($description, $handler, $function = NULL) { $this->settled OR $this->method === 'POST' AND $this->fit($description, $handler, $function); }
     public function  put($description, $handler, $function = NULL) { $this->settled OR $this->method === 'PUT'  AND $this->fit($description, $handler, $function); }
     public function controller($description, $handler) { $this->settled OR $this->fitController($description, $handler); }
+    public function group($description, $handler) { $this->settled OR $this->fitGroup($description, $handler); }
 
     public function merge($vars)
     {
@@ -95,8 +98,12 @@ class Route
 
     private function end($result)
     {
-        $this->settled = TRUE;
-        $this->result = $result;
+        if ($this->cancelled) {
+            $this->cancelled = FALSE;
+        } else {
+            $this->settled = TRUE;
+            $this->result = $result;
+        }
     }
 
     private function fit($description, $handler, $function)
@@ -127,18 +134,48 @@ class Route
         }
     }
 
-    private function fitController($description, $handler)
+    private function getRestURI($description)
     {
         $length = strlen($description);
         if (substr($this->uri, 0, $length) !== $description) {
             return FALSE;
         }
+        $this->uris[] = $this->uri;
+        return $this->uri = (
+            ($uri = substr($this->uri, $length)) === FALSE ? '/' : $uri
+        );
+    }
 
-        $uri = $this->uri;
-        if (($this->uri = substr($uri, $length)) === FALSE) {
-            $this->uri = '';
+    public function back()
+    {
+        if ($this->settled) {
+            return FALSE;
+        } else {
+            $this->_pop();
+            $this->cancelled = TRUE;
+            return TRUE;
         }
+    }
 
+    private function _pop()
+    {
+        $this->uri = array_pop($this->uris);
+    }
+
+    private function fitGroup($description, $handler)
+    {
+        if (($fit = $this->getRestURI($description)) === FALSE) {
+            return FALSE;
+        }
+        $this->end(call_user_func($handler, $this));
+        return TRUE;
+    }
+
+    private function fitController($description, $handler)
+    {
+        if (($this->getRestURI($description)) === FALSE) {
+            return FALSE;
+        }
         $function = RouteLib::getFunction($this->uri);
         if (is_array($function)) {
             $params = $function[1];
@@ -155,10 +192,9 @@ class Route
             $fn = $function;
         } elseif (method_exists($controller, 'resolve')) {
             $fn = 'resolve';
-            ($this->uri === '') AND ($this->uri = '/');
             $params = array($this);
         } else {
-            $this->uri = $uri;
+            $this->_pop();
             return FALSE;
         }
 

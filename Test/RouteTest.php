@@ -50,7 +50,19 @@ class RouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Come and play!', Test::run('/play'));
         $this->assertEquals('Come and play!', Test::run('/play/'));
         $this->assertEquals('Play No.7?', Test::run('/play/7'));
+        $this->assertEquals('Play No.7?', Test::run('/play/play/7'));
+        $this->assertEquals('No back here...', Test::run('/play/no-back'));
+        $this->assertEquals('No back here...', Test::run('/play/no-back/'));
+        $this->assertEquals('', Test::run('/play/no-back/no-back'));
         $this->assertEquals('Sorry but "Mr.Rabbit" is not here. 404.', Test::run('/play/Mr.Rabbit'));
+        $this->assertEquals('Sorry but "play/nobody" is not here. 404.', Test::run('/play/play/nobody'));
+    }
+
+    public function testGroup()
+    {
+        $this->assertEquals('Hello Cosmos!', Test::run('/planet'));
+        $this->assertEquals('Hello Cosmos!', Test::run('/planet/'));
+        $this->assertEquals('Oops, 404! "/planet/mars" does not exist.', Test::run('/planet/mars'));
     }
 
 }

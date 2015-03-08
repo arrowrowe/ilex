@@ -12,6 +12,24 @@ class PlayController extends \Ilex\Base\Controller\Base
             echo('Come and play!');
         });
         $Route->get('/(num)', $this, 'view');
+
+        // Just a test for `group` inside a controller's `resolve`...
+        $Route->group('/play', function ($Route) {
+            $Route->get('/(num)', $this, 'view');
+            $Route->back();
+        });
+
+        $Route->group('/no-back', function ($Route) {
+            $Route->get('/', function () {
+                echo('No back here...');
+            });
+            /*
+             * 404 should be handled manually here.
+             * Add `$Route->get('(all)', ...)` or `$Route->get('.*')` to response.
+             * Add `$Route->back()` to fallback.
+             */
+        });
+
         $Route->get('(all)', function ($url) {
             echo('Sorry but "' . substr($url, 1) . '" is not here. 404.');
         });

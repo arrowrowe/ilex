@@ -17,10 +17,17 @@ $Route->post('/user/(any)', function ($name) {
 
 $Route->get('/projects', 'Project');
 $Route->get('/project/(num)', 'Project', 'view');
+$Route->group('/planet', function ($Route) {
+    $Route->get('/', function () {
+        echo('Hello Cosmos!');
+    });
+    $Route->back();
+});
 
 $Route->controller('/about', 'About');
 
 $Route->controller('/play', 'Play');
+
 
 $Route->get('(all)', function ($url) {
     echo('Oops, 404! "' . $url . '" does not exist.');
