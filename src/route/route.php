@@ -60,54 +60,7 @@ class RouteLib
         }
         return count($params) ? array($function, $params) : $function;
     }
-
 }
-
-
-/**
- * Class RouteRule
- * @package Ilex\Route
- */
-class RouteRule
-{
-    private $pattern;
-    private $handler;
-    private $function;
-
-    public function __construct($description, $handler, $function)
-    {
-        $this->pattern = RouteLib::getPattern($description);
-        $this->handler = $handler;
-        $this->function = $function;
-    }
-
-    public function fit($route)
-    {
-        if (preg_match($this->pattern, $route->uri, $matches)) {
-            unset($matches[0]);
-            $route->params = array_merge($route->params, $matches);
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-
-    public function handle($route)
-    {
-        if (is_string($this->handler)) {
-            return call_user_func_array(array(
-                Loader::controller($this->handler),
-                is_null($this->function) ? 'index' : $this->function
-            ), $route->params);
-        } elseif (is_callable($this->handler)) {
-            return call_user_func_array($this->handler, $route->params);
-        } else {
-            return NULL;
-        }
-    }
-
-}
-
 
 /**
  * Class Route
@@ -115,67 +68,96 @@ class RouteRule
  */
 class Route
 {
-    private $rules = array();
-    private $rulesController = array();
-    public $uri = '';
-    public $method;
-    public $params = array();
+    private $uri;
+    private $method;
+    private $settled = FALSE;
+    private $result = NULL;
+    private $params = array();
 
-    public function __construct($method = '')
+    public function __construct($method, $uri)
     {
         $this->method = $method;
-    }
-
-    public function  get($description, $handler, $function = NULL) { $this->method === 'GET'  AND $this->_add_rule($description, $handler, $function); }
-    public function post($description, $handler, $function = NULL) { $this->method === 'POST' AND $this->_add_rule($description, $handler, $function); }
-    public function  put($description, $handler, $function = NULL) { $this->method === 'PUT'  AND $this->_add_rule($description, $handler, $function); }
-
-    private function _add_rule($description, $handler, $function)
-    {
-        $this->rules[] = new RouteRule($description, $handler, $function);
-    }
-
-    public function controller($description, $handler)
-    {
-        $this->rulesController[$description] = $handler;
-    }
-
-    public function resolve($uri)
-    {
         $this->uri = $uri;
-        $this->params = array();
-        foreach ($this->rulesController as $description => $handler) {
-            $length = strlen($description);
-            if (substr($uri, 0, $length) === $description) {
-                if (($this->uri = substr($uri, $length)) === FALSE) {
-                    $this->uri = '';
-                }
-                $function = RouteLib::getFunction($this->uri);
-                if (is_array($function)) {
-                    $this->params = $function[1];
-                    $function = $function[0];
-                }
-                $controller = Loader::controller($handler);
-                $controller->Route = $this;
-                if (method_exists($controller, $this->method . $function)) {
-                    return call_user_func_array(array($controller, $this->method . $function), $this->params);
-                } elseif (method_exists($controller, $function)) {
-                    return call_user_func_array(array($controller, $function), $this->params);
-                } elseif (method_exists($controller, 'resolve')) {
-                    return $controller->resolve();
-                } else {
-                    $this->uri = $uri;
-                    continue;
-                }
-            }
+    }
+
+    public function __get($key) { return isset($this->$key) ? $this->key : FALSE; }
+
+    public function  get($description, $handler, $function = NULL) { $this->settled OR $this->method === 'GET'  AND $this->fit($description, $handler, $function); }
+    public function post($description, $handler, $function = NULL) { $this->settled OR $this->method === 'POST' AND $this->fit($description, $handler, $function); }
+    public function  put($description, $handler, $function = NULL) { $this->settled OR $this->method === 'PUT'  AND $this->fit($description, $handler, $function); }
+    public function controller($description, $handler) { $this->settled OR $this->fitController($description, $handler); }
+
+    public function merge($vars)
+    {
+        $this->params = array_merge($this->params, $vars);
+    }
+
+    private function end($result)
+    {
+        $this->settled = TRUE;
+        $this->result = $result;
+    }
+
+    private function fit($description, $handler, $function)
+    {
+        if (preg_match(RouteLib::getPattern($description), $this->uri, $matches)) {
+            unset($matches[0]);
+            $this->merge($matches);
+            $this->handle($handler, $function);
+            return TRUE;
+        } else {
+            return FALSE;
         }
-        /** @var RouteRule $rule */
-        foreach ($this->rules as $rule) {
-            if ($rule->fit($this)) {
-                return $rule->handle($this);
-            }
+    }
+
+    private function handle($handler, $function)
+    {
+        if (is_string($handler)) {
+            $this->end(
+                call_user_func_array(array(Loader::controller($handler), is_null($function) ? 'index' : $function), $this->params)
+            );
+        } elseif (is_callable($handler)) {
+            $this->end(
+                call_user_func_array($handler, $this->params)
+            );
         }
-        throw new \Exception('Page not found', 404);
+    }
+
+    private function fitController($description, $handler)
+    {
+        $length = strlen($description);
+        if (substr($this->uri, 0, $length) !== $description) {
+            return FALSE;
+        }
+
+        $uri = $this->uri;
+        if (($this->uri = substr($uri, $length)) === FALSE) {
+            $this->uri = '';
+        }
+
+        $function = RouteLib::getFunction($this->uri);
+        if (is_array($function)) {
+            $params = $function[1];
+            $function = $function[0];
+        } else {
+            $params = array();
+        }
+
+        $controller = Loader::controller($handler);
+
+        if (method_exists($controller, $this->method . $function)) {
+            $fn = $this->method . $function;
+        } elseif (method_exists($controller, $function)) {
+            $fn = $function;
+        } elseif (method_exists($controller, 'resolve')) {
+            $fn = 'resolve';
+            $params = array($this);
+        } else {
+            return FALSE;
+        }
+
+        $this->end(call_user_func_array(array($controller, $fn), $params));
+        return TRUE;
     }
 
 }

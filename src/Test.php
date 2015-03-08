@@ -23,7 +23,7 @@ class Test
     {
         static::$Input->clear()->merge('post', $post);
         ob_start();
-        Autoloader::route($method)->resolve($url, $method);
+        Autoloader::resolve($method, $url);
         return ob_get_clean();
     }
 }
