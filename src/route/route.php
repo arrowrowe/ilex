@@ -66,6 +66,10 @@ class RouteLib
 /**
  * Class Route
  * @package Ilex\Route
+ * @method bool get(string $description, $handler, $function = NULL)
+ * @method bool post(string $description, $handler, $function = NULL)
+ * @method bool put(string $description, $handler, $function = NULL)
+ * @method bool delete(string $description, $handler, $function = NULL)
  */
 class Route
 {
@@ -85,9 +89,15 @@ class Route
 
     public function result() { return $this->result; }
 
-    public function  get($description, $handler, $function = NULL) { $this->settled OR $this->method === 'GET'  AND $this->fit($description, $handler, $function); }
-    public function post($description, $handler, $function = NULL) { $this->settled OR $this->method === 'POST' AND $this->fit($description, $handler, $function); }
-    public function  put($description, $handler, $function = NULL) { $this->settled OR $this->method === 'PUT'  AND $this->fit($description, $handler, $function); }
+    public function __call($name, $arguments)
+    {
+        if (!$this->settled AND strtoupper($name) === $this->method) {
+            return call_user_func_array(array($this, 'fit'), $arguments);
+        } else {
+            return FALSE;
+        }
+    }
+
     public function controller($description, $handler) { $this->settled OR $this->fitController($description, $handler); }
     public function group($description, $handler) { $this->settled OR $this->fitGroup($description, $handler); }
 
@@ -106,7 +116,7 @@ class Route
         }
     }
 
-    private function fit($description, $handler, $function)
+    private function fit($description, $handler, $function = NULL)
     {
         if (preg_match(RouteLib::getPattern($description), $this->uri, $matches)) {
             unset($matches[0]);
