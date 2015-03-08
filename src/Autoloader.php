@@ -38,6 +38,7 @@ class Autoloader
     {
         $Route = new Route\Route($method, $url);
         include(Loader::APPPATH() . 'config/route.php');
+        return $Route->result();
     }
 
     public static function run($APPPATH, $RUNTIMEPATH)

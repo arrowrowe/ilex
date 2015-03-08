@@ -80,7 +80,7 @@ class Route
         $this->uri = $uri;
     }
 
-    public function __get($key) { return isset($this->$key) ? $this->key : FALSE; }
+    public function result() { return $this->result; }
 
     public function  get($description, $handler, $function = NULL) { $this->settled OR $this->method === 'GET'  AND $this->fit($description, $handler, $function); }
     public function post($description, $handler, $function = NULL) { $this->settled OR $this->method === 'POST' AND $this->fit($description, $handler, $function); }
