@@ -32,6 +32,8 @@ class Autoloader
 
         // Include the constant file.
         include_once($APPPATH . 'config/const.php');
+
+        // todo: Define necessary constants if not defined...
     }
 
     public static function resolve($method, $url)
