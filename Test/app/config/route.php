@@ -18,6 +18,7 @@ $Route->post('/user/(any)', function ($name) {
 $Route->get('/projects', 'Project');
 $Route->get('/project/(num)', 'Project', 'view');
 $Route->group('/planet', function ($Route) {
+    /** @var \Ilex\Route\Route $Route */
     $Route->get('/', function () {
         echo('Hello Cosmos!');
     });

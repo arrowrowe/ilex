@@ -15,11 +15,13 @@ class PlayController extends \Ilex\Base\Controller\Base
 
         // Just a test for `group` inside a controller's `resolve`...
         $Route->group('/play', function ($Route) {
+            /** @var \Ilex\Route\Route $Route */
             $Route->get('/(num)', $this, 'view');
             $Route->back();
         });
 
         $Route->group('/no-back', function ($Route) {
+            /** @var \Ilex\Route\Route $Route */
             $Route->get('/', function () {
                 echo('No back here...');
             });
