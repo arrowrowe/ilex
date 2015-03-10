@@ -15,7 +15,7 @@ class Loader
     private static function let($k, $v)        { return self::$container[$k]      = $v; }
     private static function letTo($k, $kk, $v) { return self::$container[$k][$kk] = $v; }
 
-    public static function init($ILEXPATH, $APPPATH, $RUNTIMEPATH)
+    public static function initialize($ILEXPATH, $APPPATH, $RUNTIMEPATH)
     {
         self::let('ILEXPATH', $ILEXPATH);
         self::let('APPPATH', $APPPATH);
@@ -25,6 +25,7 @@ class Loader
         self::let('Model', array());
     }
 
+    public static function ILEXPATH()    { return self::get('ILEXPATH');    }
     public static function APPPATH()     { return self::get('APPPATH');     }
     public static function RUNTIMEPATH() { return self::get('RUNTIMEPATH'); }
 

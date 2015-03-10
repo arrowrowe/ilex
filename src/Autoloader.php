@@ -4,6 +4,8 @@ namespace Ilex;
 
 
 use Ilex\Core\Loader;
+use Ilex\Core\Constant;
+
 
 /**
  * Class Autoloader
@@ -26,14 +28,8 @@ class Autoloader
         $ILEXPATH = self::getRealPath(__DIR__);
         $APPPATH = self::getRealPath($APPPATH);
         $RUNTIMEPATH = self::getRealPath($RUNTIMEPATH);
-
-        // Initialize the loader.
-        Loader::init($ILEXPATH, $APPPATH, $RUNTIMEPATH);
-
-        // Include the constant file.
-        include_once($APPPATH . 'config/const.php');
-
-        // todo: Define necessary constants if not defined...
+        Loader::initialize($ILEXPATH, $APPPATH, $RUNTIMEPATH);
+        Constant::initialize();
     }
 
     public static function resolve($method, $url)

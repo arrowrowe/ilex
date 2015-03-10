@@ -33,7 +33,7 @@ class Session extends Base
         }
     }
 
-    private function start()
+    protected function start()
     {
         session_name(SYS_SESSNAME);
         session_start();
