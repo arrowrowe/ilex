@@ -18,7 +18,7 @@ class Base extends \Ilex\Base\Model\Base
     protected $collectionName;
     public $collection; // todo: Do NOT expose this
 
-    protected function __construct()
+    public function __construct()
     {
         $this->collection = Loader::db()->selectCollection($this->collectionName);
     }
