@@ -29,6 +29,9 @@ class Loader
     public static function APPPATH()     { return self::get('APPPATH');     }
     public static function RUNTIMEPATH() { return self::get('RUNTIMEPATH'); }
 
+    /**
+     * @return \MongoDB
+     */
     public static function db()
     {
         if (self::has('db')) {
