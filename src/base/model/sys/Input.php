@@ -24,6 +24,7 @@ class Input extends Base
     public function merge($name, $data = array())
     {
         $this->$name->merge($data);
+        return $this;
     }
 
     public function clear($name = '')

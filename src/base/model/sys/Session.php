@@ -4,6 +4,7 @@
 namespace Ilex\Base\Model\sys;
 
 use Ilex\Base\Model\Base;
+use Ilex\Core;
 
 
 /**
@@ -14,103 +15,64 @@ use Ilex\Base\Model\Base;
  * @property string uid
  * @property string username
  * @property bool login
+ *
+ * @todo Should I remove this model?......
  */
 class Session extends Base
 {
-    const SID                   = 'sid';
-    const UID                   = 'uid';
-    const USERNAME              = 'username';
-    const LOGIN                 = 'login';
-    private $array;
+    const SID       = Core\Session::SID;
+    const UID       = Core\Session::UID;
+    const USERNAME  = Core\Session::USERNAME;
+    const LOGIN     = Core\Session::LOGIN;
 
     public function __construct()
     {
-        $this->start();
-        if (ENVIRONMENT !== 'TEST') {
-            $this->array = &$_SESSION;
-        } else {
-            $this->array = array();
-        }
-        if (!$this->has(self::SID)) {
-            $this->newSid();
-        }
-        if (!$this->has(self::UID)) {
-            $this->makeGuest();
-        }
+        Core\Session::boot();
     }
 
     protected function start()
     {
-        if (ENVIRONMENT !== 'TEST') {
-            session_name(SYS_SESSNAME);
-            session_start();
-        }
+        Core\Session::start();
     }
 
     public function forget()
     {
-        if (ENVIRONMENT !== 'TEST') {
-            session_unset();
-            session_destroy();
-        }
-        $this->start();
-        $this->newSid();
-        $this->makeGuest();
+        Core\Session::forget();
     }
 
     public function makeGuest()
     {
-        $this->assign(array(
-            self::UID               => 0,
-            self::USERNAME          => 'Guest',
-            self::LOGIN             => FALSE
-        ));
+        Core\Session::makeGuest();
     }
 
     public function newSid()
     {
-        return $this->sid = sha1(uniqid().mt_rand());
+        return Core\Session::newSid();
     }
 
     public function assign($vars)
     {
-        $tmp = array_merge($this->array, $vars);
-        if (ENVIRONMENT !== 'TEST') {
-            $_SESSION = $tmp;
-            $this->array = &$_SESSION;
-        } else {
-            $this->array = $tmp;
-        }
+        Core\Session::assign($vars);
     }
 
-    public function has()
+    public function has($key)
     {
-        foreach (func_get_args() as $k) {
-            if (!isset($this->array[$k])) {
-                return FALSE;
-            }
-        }
-        return TRUE;
+        return Core\Session::has($key);
     }
 
-    public function __get($k)
+    public function __get($key)
     {
-        return $this->get($k);
+        return $this->get($key);
     }
 
-    public function get($k, $default = FALSE)
+    public function get($key = FALSE, $default = FALSE)
     {
-        return isset($this->array[$k]) ? $this->array[$k] : $default;
+        return Core\Session::get($key, $default);
     }
 
-    public function __set($k, $v)
+    public function __set($key, $value)
     {
-        $this->let($k, $v);
-    }
-
-    public function let($k, $v)
-    {
-        return $this->array[$k] = $v;
+        return Core\Session::let($key, $value);
     }
 
 }
