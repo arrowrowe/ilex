@@ -21,10 +21,16 @@ class Session extends Base
     const UID                   = 'uid';
     const USERNAME              = 'username';
     const LOGIN                 = 'login';
+    private $array;
 
     public function __construct()
     {
         $this->start();
+        if (ENVIRONMENT !== 'TEST') {
+            $this->array = &$_SESSION;
+        } else {
+            $this->array = array();
+        }
         if (!$this->has(self::SID)) {
             $this->newSid();
         }
@@ -35,14 +41,18 @@ class Session extends Base
 
     protected function start()
     {
-        session_name(SYS_SESSNAME);
-        session_start();
+        if (ENVIRONMENT !== 'TEST') {
+            session_name(SYS_SESSNAME);
+            session_start();
+        }
     }
 
     public function forget()
     {
-        session_unset();
-        session_destroy();
+        if (ENVIRONMENT !== 'TEST') {
+            session_unset();
+            session_destroy();
+        }
         $this->start();
         $this->newSid();
         $this->makeGuest();
@@ -64,13 +74,19 @@ class Session extends Base
 
     public function assign($vars)
     {
-        $_SESSION = array_merge($_SESSION, $vars);
+        $tmp = array_merge($this->array, $vars);
+        if (ENVIRONMENT !== 'TEST') {
+            $_SESSION = $tmp;
+            $this->array = &$_SESSION;
+        } else {
+            $this->array = $tmp;
+        }
     }
 
     public function has()
     {
         foreach (func_get_args() as $k) {
-            if (!isset($_SESSION[$k])) {
+            if (!isset($this->array[$k])) {
                 return FALSE;
             }
         }
@@ -84,7 +100,7 @@ class Session extends Base
 
     public function get($k, $default = FALSE)
     {
-        return isset($_SESSION[$k]) ? $_SESSION[$k] : $default;
+        return isset($this->array[$k]) ? $this->array[$k] : $default;
     }
 
     public function __set($k, $v)
@@ -94,7 +110,7 @@ class Session extends Base
 
     public function let($k, $v)
     {
-        return $_SESSION[$k] = $v;
+        return $this->array[$k] = $v;
     }
 
 }

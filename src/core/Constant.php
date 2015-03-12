@@ -16,6 +16,8 @@ class Constant
 
         'SYS_SESSNAME'          => 'ILEX_SESSION',
 
+        'ENVIRONMENT'           => 'DEVELOPMENT',
+
         /*
          * -----------------------
          * Server

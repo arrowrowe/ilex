@@ -15,6 +15,7 @@ class Test
 
     public static function boot($APPPATH, $RUNTIMEPATH)
     {
+        define('ENVIRONMENT', 'TEST');
         Autoloader::initialize($APPPATH, $RUNTIMEPATH);
         static::$Input = Core\Loader::model('sys/Input');
     }
