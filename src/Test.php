@@ -23,6 +23,7 @@ class Test
     public static function run($url = '/', $method = 'GET', $post = array())
     {
         static::$Input->clear()->merge('post', $post);
+        $_SERVER['REQUEST_URI'] =  ENV_HOST . '/' . $url;
         ob_start();
         Autoloader::resolve($method, $url);
         return ob_get_clean();
