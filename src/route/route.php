@@ -149,11 +149,13 @@ class Route
         $length = strlen($description);
         if (substr($this->uri, 0, $length) !== $description) {
             return FALSE;
+        } else {
+            $this->uris[] = $this->uri;
+            $this->uri = (
+                ($uri = substr($this->uri, $length)) === FALSE ? '/' : $uri
+            );
+            return TRUE;
         }
-        $this->uris[] = $this->uri;
-        return $this->uri = (
-            ($uri = substr($this->uri, $length)) === FALSE ? '/' : $uri
-        );
     }
 
     public function back()
@@ -174,16 +176,17 @@ class Route
 
     private function fitGroup($description, $handler)
     {
-        if (($fit = $this->getRestURI($description)) === FALSE) {
+        if ($this->getRestURI($description)) {
+            $this->end(call_user_func($handler, $this));
+            return TRUE;
+        } else {
             return FALSE;
         }
-        $this->end(call_user_func($handler, $this));
-        return TRUE;
     }
 
     private function fitController($description, $handler)
     {
-        if (($this->getRestURI($description)) === FALSE) {
+        if (!$this->getRestURI($description)) {
             return FALSE;
         }
         $function = RouteLib::getFunction($this->uri);
