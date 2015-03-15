@@ -66,6 +66,7 @@ class RouteLib
 /**
  * Class Route
  * @package Ilex\Route
+ * @method bool any(string $description, $handler, $function = NULL)
  * @method bool get(string $description, $handler, $function = NULL)
  * @method bool post(string $description, $handler, $function = NULL)
  * @method bool put(string $description, $handler, $function = NULL)
@@ -91,7 +92,7 @@ class Route
 
     public function __call($name, $arguments)
     {
-        if (!$this->settled AND strtoupper($name) === $this->method) {
+        if (!$this->settled AND (strtoupper($name) === $this->method OR $name === 'any')) {
             return call_user_func_array(array($this, 'fit'), $arguments);
         } else {
             return FALSE;

@@ -34,7 +34,7 @@ class Container
     public function get($key, $default)
     {
         return is_null($key) ?
-            $this->$array :
+            $this->array :
             (isset($this->array[$key]) ? $this->array[$key] : $default);
     }
 
