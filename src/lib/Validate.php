@@ -56,9 +56,18 @@ class Validate
             if (in_array($ruleName, array('name', 'require'))) {
                 continue;
             }
-            $result = static::rule($value, $ruleName, $rule, $rule['message']);
-            if ($result !== TRUE) {
-                $errors[] = $result;
+            if ($ruleName === 'all') {
+                foreach ($value as $valueItem) {
+                    $result = static::package($valueItem, $rule);
+                    if ($result !== TRUE) {
+                        $errors += $result;
+                    }
+                }
+            } else {
+                $result = static::rule($value, $ruleName, $rule, $rule['message']);
+                if ($result !== TRUE) {
+                    $errors[] = $result;
+                }
             }
         }
         return count($errors) ? $errors : TRUE;
@@ -80,6 +89,11 @@ class Validate
     public static function eq($value, $rule)   { return $value ==  $rule['value']; }
     public static function same($value, $rule) { return $value === $rule['value']; }
 
+    public static function        gt($value, $rule) { return          $value  >  $rule['value']; }
+    public static function        lt($value, $rule) { return          $value  <  $rule['value']; }
+    public static function        ge($value, $rule) { return          $value  >= $rule['value']; }
+    public static function        le($value, $rule) { return          $value  <= $rule['value']; }
+
     public static function    int_gt($value, $rule) { return   intval($value) >  $rule['value']; }
     public static function    int_lt($value, $rule) { return   intval($value) <  $rule['value']; }
     public static function    int_ge($value, $rule) { return   intval($value) >= $rule['value']; }
@@ -90,9 +104,15 @@ class Validate
     public static function  float_ge($value, $rule) { return floatval($value) >= $rule['value']; }
     public static function  float_le($value, $rule) { return floatval($value) <= $rule['value']; }
 
+    public static function  count_gt($value, $rule) { return    count($value) >  $rule['value']; }
+    public static function  count_lt($value, $rule) { return    count($value) <  $rule['value']; }
+    public static function  count_ge($value, $rule) { return    count($value) >= $rule['value']; }
+    public static function  count_le($value, $rule) { return    count($value) <= $rule['value']; }
+
     public static function length_gt($value, $rule) { return   strlen($value) >  $rule['value']; }
     public static function length_lt($value, $rule) { return   strlen($value) <  $rule['value']; }
     public static function length_ge($value, $rule) { return   strlen($value) >= $rule['value']; }
     public static function length_le($value, $rule) { return   strlen($value) <= $rule['value']; }
     public static function length_eq($value, $rule) { return   strlen($value) === $rule['value']; }
+
 }

@@ -38,6 +38,16 @@ class Container
             (isset($this->array[$key]) ? $this->array[$key] : $default);
     }
 
+    public function __set($key, $value)
+    {
+        return $this->let($key, $value);
+    }
+
+    public function let($key, $value)
+    {
+        return $this->array[$key] = $value;
+    }
+
     public function merge($data)
     {
         $this->assign(array_merge($this->array, $data));
