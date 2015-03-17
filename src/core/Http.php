@@ -11,4 +11,9 @@ class Http
             header('Location: ' . $url);
         }
     }
+
+    public static function json($data)
+    {
+        echo(json_encode($data));
+    }
 }
