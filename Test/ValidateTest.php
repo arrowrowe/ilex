@@ -33,7 +33,8 @@ class ValidateTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 'name' => 'age',
-                'require' => array('type' => 'int', 'message' => 'AGE_REQUIRE')
+                'require' => array('message' => 'AGE_REQUIRE'),
+                'type' => array('type' => 'int', 'message' => 'AGE_TYPE_FAIL')
             ),
             array(
                 'name' => 'code',
@@ -51,12 +52,14 @@ class ValidateTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 'name' => 'planets',
+                'type' => array('type' => 'array', 'message' => 'PLANETS_TYPE_FAIL'),
                 'all' => array(
                     're' => array('pattern' => '@^\w\w\d\d$@', 'message' => 'PLANETS_PATTERN_FAIL')
                 )
             ),
             array(
                 'name' => 'flowers',
+                'type' => array('type' => 'array', 'message' => 'FLOWERS_TYPE_FAIL'),
                 'all' => array(
                     're' => array('pattern' => '@^\w+$@', 'message' => 'FLOWERS_PATTERN_FAIL')
                 )

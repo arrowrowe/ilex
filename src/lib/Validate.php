@@ -25,26 +25,39 @@ class Validate
                     $errors[$name] = array($rule['message']);
                     continue;
                 }
-                if (isset($rule['type'])) {
-                    switch ($rule['type']) {
-                        case 'int':
-                            $values[$name] = intval($values[$name]);
-                            break;
-                        case 'float':
-                            $values[$name] = floatval($values[$name]);
-                            break;
-                        case 'array':
-                            if (!is_array($values[$name])) {
-                                $errors[$name] = array($rule['message']);
-                                continue;
-                            }
-                    }
-                }
             } elseif (!isset($values[$name])) {
                 if (isset($rulePackage['default'])) {
                     $values[$name] = $rulePackage['default'];
                 }
                 continue;
+            }
+
+            if (isset($rulePackage['type'])) {
+                $rule = $rulePackage['type'];
+                switch ($rule['type']) {
+                    case 'int':
+                        if (!static::is_int($values[$name])) {
+                            $errors[$name] = array($rule['message']);
+                            continue;
+                        }
+                        $values[$name] = intval($values[$name]);
+                        break;
+                    case 'float':
+                        if (!static::is_float($values[$name])) {
+                            $errors[$name] = array($rule['message']);
+                            continue;
+                        }
+                        $values[$name] = floatval($values[$name]);
+                        break;
+                    case 'array':
+                        if (!is_array($values[$name])) {
+                            $errors[$name] = array($rule['message']);
+                            continue;
+                        }
+                        break;
+                    default:
+                        throw new \Exception('Unrecognizable type "' . $rule['type'] . '" for Validation.');
+                }
             }
 
             $results = static::package($values[$name], $rulePackage);
@@ -59,7 +72,7 @@ class Validate
     {
         $errors = array();
         foreach ($rulePackage as $ruleName => $rule) {
-            if (in_array($ruleName, array('name', 'require'))) {
+            if (in_array($ruleName, array('name', 'require', 'type'))) {
                 continue;
             }
             if ($ruleName === 'all') {
@@ -82,6 +95,34 @@ class Validate
     public static function rule($value, $ruleName, $rule, $message = FALSE)
     {
         return static::$ruleName($value, $rule) ? TRUE : $message;
+    }
+
+    /*
+     * ----------------------- -----------------------
+     * Kit
+     * ----------------------- -----------------------
+     */
+
+    public static function is_int($value)
+    {
+        if (is_int($value)) {
+            return TRUE;
+        } elseif (preg_match('@^\d+$@', $value) === 1) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public static function is_float($value)
+    {
+        if (is_float($value) OR is_int($value)) {
+            return TRUE;
+        } elseif (preg_match('@^(\d+(\.\d*)?|\.\d+)$@', $value) === 1) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
     /*
