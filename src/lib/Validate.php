@@ -32,6 +32,12 @@ class Validate
                             break;
                         case 'float':
                             $values[$name] = floatval($values[$name]);
+                            break;
+                        case 'array':
+                            if (!is_array($values[$name])) {
+                                $errors[$name] = array($rule['message']);
+                                continue;
+                            }
                     }
                 }
             } elseif (!isset($values[$name])) {
