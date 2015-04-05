@@ -38,34 +38,6 @@ class Validate
                 continue;
             }
 
-            if (isset($rulePackage['type'])) {
-                $rule = $rulePackage['type'];
-                switch ($rule['type']) {
-                    case 'int':
-                        if (!static::is_int($values[$name])) {
-                            $errors[$name] = array($rule['message']);
-                            continue;
-                        }
-                        $values[$name] = intval($values[$name]);
-                        break;
-                    case 'float':
-                        if (!static::is_float($values[$name])) {
-                            $errors[$name] = array($rule['message']);
-                            continue;
-                        }
-                        $values[$name] = floatval($values[$name]);
-                        break;
-                    case 'array':
-                        if (!is_array($values[$name])) {
-                            $errors[$name] = array($rule['message']);
-                            continue;
-                        }
-                        break;
-                    default:
-                        throw new \Exception('Unrecognizable type "' . $rule['type'] . '" for Validation.');
-                }
-            }
-
             $results = static::package($values[$name], $rulePackage);
             if ($results !== TRUE) {
                 $errors[$name] = $results;
@@ -74,11 +46,11 @@ class Validate
         return count($errors) ? $errors : TRUE;
     }
 
-    public static function package($value, $rulePackage)
+    public static function package(&$value, $rulePackage)
     {
         $errors = array();
         foreach ($rulePackage as $ruleName => $rule) {
-            if (in_array($ruleName, array('name', 'require', 'default', 'type'))) {
+            if (in_array($ruleName, array('name', 'require', 'default'))) {
                 continue;
             } elseif ($ruleName === 'all') {
                 foreach ($value as $valueItem) {
@@ -97,7 +69,7 @@ class Validate
         return count($errors) ? $errors : TRUE;
     }
 
-    public static function rule($value, $ruleName, $rule, $message = FALSE)
+    public static function rule(&$value, $ruleName, $rule, $message = FALSE)
     {
         return static::$ruleName($value, $rule) ? TRUE : $message;
     }
@@ -135,6 +107,30 @@ class Validate
      * Rules
      * ----------------------- -----------------------
      */
+
+    public static function type(&$value, $rule)
+    {
+        switch ($rule['type']) {
+            case 'int':
+                if (!static::is_int($value)) {
+                    return FALSE;
+                } else {
+                    $value = intval($value);
+                    return TRUE;
+                }
+            case 'float':
+                if (!static::is_float($value)) {
+                    return FALSE;
+                } else {
+                    $value = floatval($value);
+                    return TRUE;
+                }
+            case 'array':
+                return is_array($value);
+            default:
+                throw new \Exception('Unrecognizable type "' . $rule['type'] . '" for Validation.');
+        }
+    }
 
     public static function re($value, $rule)
     {
