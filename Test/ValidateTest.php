@@ -10,6 +10,8 @@ class ValidateTest extends PHPUnit_Framework_TestCase
     {
         $data = array(
             'password' => '1234',
+            'email' => 'someone@some.site',
+            'mobile' => '12001111222',
             'age' => '23',
             'code' => 'af3s!',
             'answer' => '42',
@@ -30,6 +32,14 @@ class ValidateTest extends PHPUnit_Framework_TestCase
                 'name' => 'password',
                 'require' => array('message' => 'PASSWORD_REQUIRED'),
                 'length_ge' => array('value' => 6, 'message' => 'PASSWORD_LENGTH_LT_6')
+            ),
+            array(
+                'name' => 'email',
+                're' => array('type' => 'email', 'message' => 'EMAIL_PATTERN_FAIL')
+            ),
+            array(
+                'name' => 'mobile',
+                're' => array('type' => 'mobile', 'message' => 'MOBILE_PATTERN_FAIL')
             ),
             array(
                 'name' => 'age',
@@ -68,6 +78,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array(
             'username' => array('NAME_REQUIRED'),
             'password' => array('PASSWORD_LENGTH_LT_6'),
+            'mobile' => array('MOBILE_PATTERN_FAIL'),
             'code' => array('CODE_PATTERN_FAIL', 'CODE_LENGTH_NE_4'),
             'planets' => array('PLANETS_PATTERN_FAIL')
         ), $result, 'Validation result does not come out as expected.');

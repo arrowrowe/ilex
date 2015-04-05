@@ -10,6 +10,16 @@ namespace Ilex\lib;
  */
 class Validate
 {
+    public static $patterns = array(
+        'alpha' => '/^[\pL\pM]+$/u',
+        'alpha_num' => '/^[\pL\pM\pN]+$/u',
+        'aA' => '/^[a-z]+$/i',
+        'aA0' => '/^[a-z0-9]+$/i',
+        'chinese' => '/^[\x{4e00}-\x{9fa5}]+$/u',
+        'captcha' => '/^[a-z0-9]{4}$/i',
+        'mobile' => '/^1[3-9][0-9]{9}$/',
+        'email' => '/([a-z0-9]*[-_\.]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?/i',
+    );
 
     public static function batch(&$values, $rulePackages)
     {
@@ -131,7 +141,12 @@ class Validate
      * ----------------------- -----------------------
      */
 
-    public static function re($value, $rule) { return preg_match($rule['pattern'], $value) === 1; }
+    public static function re($value, $rule) {
+        return preg_match(
+            isset($rule['pattern']) ? $rule['pattern'] : static::$patterns[$rule['type']],
+            $value
+        ) === 1;
+    }
 
     public static function eq($value, $rule)   { return $value ==  $rule['value']; }
     public static function same($value, $rule) { return $value === $rule['value']; }
