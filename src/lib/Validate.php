@@ -112,18 +112,18 @@ class Validate
     {
         switch ($rule['type']) {
             case 'int':
-                if (!static::is_int($value)) {
-                    return FALSE;
-                } else {
+                if (static::is_int($value)) {
                     $value = intval($value);
                     return TRUE;
+                } else {
+                    return FALSE;
                 }
             case 'float':
-                if (!static::is_float($value)) {
-                    return FALSE;
-                } else {
+                if (static::is_float($value)) {
                     $value = floatval($value);
                     return TRUE;
+                } else {
+                    return FALSE;
                 }
             case 'array':
                 return is_array($value);
