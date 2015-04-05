@@ -23,7 +23,6 @@ class Validate
 
     public static function batch(&$values, $rulePackages)
     {
-        $rulePackageCount = count($rulePackages);
         $errors = array();
         foreach ($rulePackages as $i => $rulePackage) {
             $name = isset($rulePackage['name']) ? $rulePackage['name'] : $i;
