@@ -136,7 +136,8 @@ class Validate
      * ----------------------- -----------------------
      */
 
-    public static function re($value, $rule) {
+    public static function re($value, $rule)
+    {
         return preg_match(
             isset($rule['pattern']) ? $rule['pattern'] : static::$patterns[$rule['type']],
             $value
