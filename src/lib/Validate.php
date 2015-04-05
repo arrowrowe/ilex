@@ -27,19 +27,13 @@ class Validate
         foreach ($rulePackages as $i => $rulePackage) {
             $name = isset($rulePackage['name']) ? $rulePackage['name'] : $i;
 
-            if (isset($rulePackage['require'])) {
-                $rule = $rulePackage['require'];
-                if (!isset($values[$name])) {
-                    if (isset($rulePackage['default'])) {
-                        $values[$name] = $rulePackage['default'];
-                    } else {
-                        $errors[$name] = array($rule['message']);
-                    }
-                    continue;
-                }
-            } elseif (!isset($values[$name])) {
+            if (!isset($values[$name])) {
                 if (isset($rulePackage['default'])) {
                     $values[$name] = $rulePackage['default'];
+                } else {
+                    if (isset($rulePackage['require'])) {
+                        $errors[$name] = array($rulePackage['require']['message']);
+                    }
                 }
                 continue;
             }
