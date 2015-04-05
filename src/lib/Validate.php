@@ -80,8 +80,7 @@ class Validate
         foreach ($rulePackage as $ruleName => $rule) {
             if (in_array($ruleName, array('name', 'require', 'default', 'type'))) {
                 continue;
-            }
-            if ($ruleName === 'all') {
+            } elseif ($ruleName === 'all') {
                 foreach ($value as $valueItem) {
                     $result = static::package($valueItem, $rule);
                     if ($result !== TRUE) {
