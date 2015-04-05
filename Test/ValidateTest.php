@@ -32,7 +32,8 @@ class ValidateTest extends PHPUnit_Framework_TestCase
                 'length_ge' => array('value' => 6, 'message' => 'PASSWORD_LENGTH_LT_6')
             ),
             'email' => array(
-                're' => array('type' => 'email', 'message' => 'EMAIL_PATTERN_FAIL')
+                're' => array('type' => 'email', 'message' => 'EMAIL_PATTERN_FAIL'),
+                'default' => 'nobody@no.site'
             ),
             'mobile' => array(
                 're' => array('type' => 'mobile', 'message' => 'MOBILE_PATTERN_FAIL')

@@ -81,7 +81,7 @@ class Validate
     {
         $errors = array();
         foreach ($rulePackage as $ruleName => $rule) {
-            if (in_array($ruleName, array('name', 'require', 'type'))) {
+            if (in_array($ruleName, array('name', 'require', 'default', 'type'))) {
                 continue;
             }
             if ($ruleName === 'all') {
