@@ -30,7 +30,11 @@ class Validate
             if (isset($rulePackage['require'])) {
                 $rule = $rulePackage['require'];
                 if (!isset($values[$name])) {
-                    $errors[$name] = array($rule['message']);
+                    if (isset($rulePackage['default'])) {
+                        $values[$name] = $rulePackage['default'];
+                    } else {
+                        $errors[$name] = array($rule['message']);
+                    }
                     continue;
                 }
             } elseif (!isset($values[$name])) {
