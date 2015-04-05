@@ -25,8 +25,7 @@ class Validate
     {
         $rulePackageCount = count($rulePackages);
         $errors = array();
-        for ($i = 0; $i < $rulePackageCount; $i++) {
-            $rulePackage = $rulePackages[$i];
+        foreach ($rulePackages as $i => $rulePackage) {
             $name = isset($rulePackage['name']) ? $rulePackage['name'] : $i;
 
             if (isset($rulePackage['require'])) {

@@ -23,26 +23,21 @@ class ValidateTest extends PHPUnit_Framework_TestCase
             )
         );
         $result = Validate::batch($data, array(
-            array(
-                'name' => 'username',
+            'username' => array(
                 'require' => array('message' => 'NAME_REQUIRED'),
                 'length_gt' => array('value' => 0)
             ),
-            array(
-                'name' => 'password',
+            'password' => array(
                 'require' => array('message' => 'PASSWORD_REQUIRED'),
                 'length_ge' => array('value' => 6, 'message' => 'PASSWORD_LENGTH_LT_6')
             ),
-            array(
-                'name' => 'email',
+            'email' => array(
                 're' => array('type' => 'email', 'message' => 'EMAIL_PATTERN_FAIL')
             ),
-            array(
-                'name' => 'mobile',
+            'mobile' => array(
                 're' => array('type' => 'mobile', 'message' => 'MOBILE_PATTERN_FAIL')
             ),
-            array(
-                'name' => 'age',
+            'age' => array(
                 'require' => array('message' => 'AGE_REQUIRE'),
                 'type' => array('type' => 'int', 'message' => 'AGE_TYPE_FAIL')
             ),
