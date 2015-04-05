@@ -144,7 +144,9 @@ class Validate
     }
 
     public static function eq($value, $rule)   { return $value ==  $rule['value']; }
+    public static function ne($value, $rule)   { return $value !=  $rule['value']; }
     public static function same($value, $rule) { return $value === $rule['value']; }
+    public static function diff($value, $rule) { return $value !== $rule['value']; }
 
     public static function        gt($value, $rule) { return          $value  >  $rule['value']; }
     public static function        lt($value, $rule) { return          $value  <  $rule['value']; }
@@ -171,5 +173,11 @@ class Validate
     public static function length_ge($value, $rule) { return   strlen($value) >= $rule['value']; }
     public static function length_le($value, $rule) { return   strlen($value) <= $rule['value']; }
     public static function length_eq($value, $rule) { return   strlen($value) === $rule['value']; }
+
+    public static function mb_length_gt($value, $rule) { return mb_strlen($value) >  $rule['value']; }
+    public static function mb_length_lt($value, $rule) { return mb_strlen($value) <  $rule['value']; }
+    public static function mb_length_ge($value, $rule) { return mb_strlen($value) >= $rule['value']; }
+    public static function mb_length_le($value, $rule) { return mb_strlen($value) <= $rule['value']; }
+    public static function mb_length_eq($value, $rule) { return mb_strlen($value) === $rule['value']; }
 
 }
