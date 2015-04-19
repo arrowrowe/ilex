@@ -5,3 +5,4 @@ php:
 
 before_script:
   - composer install --no-interaction --prefer-dist
+  - composer dump-autoload
