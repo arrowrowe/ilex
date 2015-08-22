@@ -1,7 +1,7 @@
 <?php
 
 namespace Ilex\Core;
-
+use ReflectionClass;
 
 /**
  * Class Loader
@@ -48,7 +48,7 @@ class Loader
     }
 
     public static function controller($path) { return self::loadWithBase($path, 'Controller'); }
-    public static function      model($path) { return self::loadWithBase($path,      'Model'); }
+    public static function      model($path, $params) { return self::loadWithBase($path,      'Model', $params); }
 
     public static function isModelLoaded($path) { return self::isLoadedWithBase($path, 'Model'); }
 
@@ -58,7 +58,7 @@ class Loader
         return isset($typeEntities[$path]);
     }
 
-    private static function loadWithBase($path, $type)
+    private static function loadWithBase($path, $type, $params = array())
     {
         // Ensure that for each model only one entity is loaded.
         $typeEntities = self::get($type);
@@ -69,7 +69,7 @@ class Loader
             if ($className === FALSE) {
                 throw new \Exception(ucfirst($type) . ' ' . $path . ' not found.');
             }
-            $class = new $className;
+            $class = self::createInstance($className, $params);
             return self::letTo($type, $path, $class);
         }
     }
@@ -100,4 +100,8 @@ class Loader
         return $handler === FALSE ? $path : substr($handler, 1);
     }
 
+    private static function createInstance($class, $params) {
+        $reflection_class = new ReflectionClass($class);
+        return $reflection_class->newInstanceArgs($params);
+    }
 }
