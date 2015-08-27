@@ -48,7 +48,7 @@ class Loader
     }
 
     public static function controller($path) { return self::loadWithBase($path, 'Controller'); }
-    public static function      model($path, $params) { return self::loadWithBase($path,      'Model', $params); }
+    public static function      model($path, $params = array()) { return self::loadWithBase($path,      'Model', $params); }
 
     public static function isModelLoaded($path) { return self::isLoadedWithBase($path, 'Model'); }
 
